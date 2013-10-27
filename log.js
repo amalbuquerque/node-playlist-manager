@@ -9,8 +9,9 @@ var logger = new (winston.Logger)({
         json: false,
         timestamp: true,
         level: config.log.level
-    }),
-    new (winston.transports.File)({ 
+    })
+    /*
+    ,new (winston.transports.File)({ 
         filename: __dirname + '/' 
         + (config.folders.logs || 'logs') + '/' 
         + (config.log.logfile || 'debug.log'),
@@ -18,16 +19,19 @@ var logger = new (winston.Logger)({
         maxsize: config.log.maxfilesize,
         level: config.log.level
     })
+    */
   ],
   exceptionHandlers: [
-    new (winston.transports.Console)({ json: false, timestamp: true }),
-    new (winston.transports.File)({
+    new (winston.transports.Console)({ json: false, timestamp: true })
+    /*
+    ,new (winston.transports.File)({
         filename: __dirname + '/'
         + (config.folders.logs || 'logs') + '/'
         + (config.log.exceptionsfile || 'exceptions.log'),
         json: false,
         maxsize: config.log.maxfilesize
     })
+    */
   ],
   exitOnError: false
 });
