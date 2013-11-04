@@ -2,17 +2,16 @@
 var config = require('./config');
 var logger = require('./log');
 
+var express = require('express');
+var fs = require('fs');
+var engines = require('consolidate');
+
 var scriptsPath = config.folders.scripts;
 var scriptsRemoteFolder = 'scripts';
 var assetsPath = config.folders.assetsPath;
 var assetsRemoteFolder = 'assets';
 
-var express = require('express');
-var fs = require('fs');
-
 var app = express();
-
-var engines = require('consolidate');
 
 // pasta onde serao servidos os scripts
 app.use('/' + scriptsRemoteFolder, express.static(__dirname + '/' + scriptsPath));
@@ -34,7 +33,7 @@ app.get('/hello.txt', function(req, res) {
 
 // Forma com recurso ao express
 app.get('/', function(req, res) {
-    res.send("Hello world, I'm the ThatsIt Playlist Manager");
+    res.render('index.html');
 });
 
 var nodemailer = require("nodemailer");

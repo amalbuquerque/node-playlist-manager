@@ -18,7 +18,7 @@ config.log.level = 'info';
 
 config.clients.hosts = [ 'ip1:123', 'ip2:321', 'ip3:456' ]
 
-config.web.port = process.env.PORT || 3000;
+config.web.port = process.env.PORT || 3001;
 
 module.exports = config;
 
