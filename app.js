@@ -1,3 +1,4 @@
+// thatsit-manager: app.js
 // setup
 var config = require('./config');
 var logger = require('./log');
@@ -33,7 +34,13 @@ app.get('/hello.txt', function(req, res) {
 
 // Forma com recurso ao express
 app.get('/', function(req, res) {
-    res.render('index.html');
+    console.log('returning: ' + JSON.stringify ( config.clients.hosts ));
+    res.render('index.html', {
+        // <%= hosts %> renderiza HTML, escapa caracteres
+        // <%- hosts %> coloca a string que passamos, sem qq escape
+        hosts: JSON.stringify ( config.clients.hosts ),
+        infopath: config.clients.infoPath
+    });
 });
 
 var nodemailer = require("nodemailer");

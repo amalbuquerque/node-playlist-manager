@@ -16,7 +16,15 @@ config.log.logfile = 'debug.log';
 config.log.exceptionsfile = 'exceptions.log';
 config.log.level = 'info';
 
-config.clients.hosts = [ 'ip1:123', 'ip2:321', 'ip3:456' ]
+config.clients.hosts = [
+{ 'nome' : 'Ericeira',
+  'host' : 'localhost:3001' },
+{ 'nome' : 'Venda',
+  'host' : 'localhost:3001' },
+{ 'nome' : 'Mafra',
+  'host' : 'ip3:456' }
+];
+config.clients.infoPath = '/ajax/get-info';
 
 config.web.port = process.env.PORT || 3001;
 
