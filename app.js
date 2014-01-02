@@ -5,6 +5,7 @@ var logger = require('./log');
 
 var express = require('express');
 var fs = require('fs');
+var restler = require('restler');
 var engines = require('consolidate');
 
 var scriptsPath = config.folders.scripts;
@@ -45,7 +46,7 @@ app.get('/', function(req, res) {
 
 var nodemailer = require("nodemailer");
 
-app.get('/test', function(req, res) {
+app.get('/mailtest', function(req, res) {
     // create reusable transport method (opens pool of SMTP connections)
     var smtpTransport = nodemailer.createTransport("SMTP", {
         service: "Gmail",
@@ -78,6 +79,29 @@ app.get('/test', function(req, res) {
 
     res.send("Hello world, I'm the ThatsIt Playlist Manager. Sent mail!");
 });
+
+// 2013-12-23, AA: OK a bombar
+// falta passar o caminho do ficheiro,
+// a duration do spot e o URL em que posta
+app.get('/xptu', function(req, res) {
+    var filename = "zzzzzCasadasCasas.swf";
+    var input_path = "C:\\" + filename;
+
+    fs.stat(input_path, function(err, stats) {
+        restler.post("http://localhost:3000/ajax/upload-spot", {
+            multipart: true,
+            data: {
+                "userSpot": restler.file(input_path, filename, stats.size, null, "application/x-shockwave-flash"),
+                "durationSpot": 14
+            }
+        }).on("complete", function(data) {
+            logger.info("Complete!:", data);
+        });
+    });
+
+    res.send("OK");
+});
+
 
 app.listen(config.web.port);
 logger.info('Listening on port ' + config.web.port);
