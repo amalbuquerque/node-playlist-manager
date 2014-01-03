@@ -2,6 +2,7 @@
 // setup
 var config = require('./config');
 var logger = require('./log');
+var myutils = require('./utils');
 
 var express = require('express');
 var fs = require('fs');
@@ -78,6 +79,63 @@ app.get('/mailtest', function(req, res) {
     });
 
     res.send("Hello world, I'm the ThatsIt Playlist Manager. Sent mail!");
+});
+
+// 2013-12-18, AA: Upload para permitir o save
+// dos spots directamente
+app.get('/upload-spot', function(req, res) {
+    res.render('upload.html', {
+            hosts: config.clients.hosts,
+        });
+});
+
+// 2013-12-22, AA: podemos colocar o Parser (ou mais do que um)
+// que devera ser utilizado no tratamento do request
+app.post('/ajax/upload-spot', express.bodyParser(), function(req, res) {
+
+    logger.info(myutils.JSONstringify(req.files));
+    logger.info('Received spot: ' + req.files.userSpot.name);
+    logger.info('With duration: ' + req.body.durationSpot);
+    logger.info('Send to host: ' + req.body.hostToSend);
+
+    var chosen_host = req.body.hostToSend;
+    var spot_duration = req.body.durationSpot;
+    var filename = req.files.userSpot.name;
+    var endpoint = "http://";
+
+    var found_host = config.clients.hosts.some(function (h) {
+        if (h.host === chosen_host) {
+            endpoint += h.host + ":" + h.port + "/ajax/upload-spot";
+            return true;
+        }
+        // .some para no primeiro true
+        return false;
+    });
+
+    if ( found_host ) {
+        var input_path = req.files.userSpot.path;
+
+        fs.stat(input_path, function(err, stats) {
+            restler.post(endpoint, {
+                multipart: true,
+                data: {
+                    "userSpot": restler.file(input_path, filename, stats.size, null, "application/x-shockwave-flash"),
+                    "durationSpot": spot_duration
+                }
+            }).on("complete", function(result) {
+                if (result instanceof Error) {
+                    logger.info("ERRO no Sent!:", result);
+                } else {
+                    logger.info("Complete!:", result);
+                }
+                res.send({
+                    filesystemPath: req.files.userSpot.path,
+                    sentWithSuccess: (result instanceof Error)
+                });
+            });
+        });
+    }
+
 });
 
 // 2013-12-23, AA: OK a bombar
