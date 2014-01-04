@@ -96,8 +96,6 @@ app.post('/ajax/upload-spot', express.bodyParser(), function(req, res) {
     logger.info(myutils.JSONstringify(req.files));
     logger.info('Received spot: ' + req.files.userSpot.name);
     logger.info('With duration: ' + req.body.durationSpot);
-    logger.info('Send to host: ' + req.body.hostToSend);
-
     var chosen_host = req.body.hostToSend;
     var spot_duration = req.body.durationSpot;
     var filename = req.files.userSpot.name;
@@ -113,6 +111,8 @@ app.post('/ajax/upload-spot', express.bodyParser(), function(req, res) {
     });
 
     if ( found_host ) {
+        logger.info('Send to endpoint: ', endpoint);
+
         var input_path = req.files.userSpot.path;
 
         fs.stat(input_path, function(err, stats) {
