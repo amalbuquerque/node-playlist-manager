@@ -20,10 +20,10 @@ config.clients.hosts = [
 { 'nome' : 'Ericeira',
   'host' : 'thatsitoutdoor1.no-ip.biz',
   'port' : '3000' }
-,{ 'nome' : 'Venda (nao funciona ainda)',
+,{ 'nome' : 'VendaNOK',
   'host' : 'xpto',
   'port' : '3000' }
-,{ 'nome' : 'Mafra (nao funciona ainda)',
+,{ 'nome' : 'MafraNOK',
   'host' : 'xptu',
   'port' : '3000' }
 ];
