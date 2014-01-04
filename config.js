@@ -18,14 +18,14 @@ config.log.level = 'info';
 
 config.clients.hosts = [
 { 'nome' : 'Ericeira',
-  'host' : 'localhost',
-  'port' : '3000' },
-{ 'nome' : 'Venda',
-  'host' : 'localhost',
-  'port' : '3001' },
-{ 'nome' : 'Mafra',
-  'host' : 'ip3',
-  'port' : '456' }
+  'host' : 'thatsitoutdoor1.no-ip.biz',
+  'port' : '3000' }
+,{ 'nome' : 'Venda (nao funciona ainda)',
+  'host' : 'xpto',
+  'port' : '3000' }
+,{ 'nome' : 'Mafra (nao funciona ainda)',
+  'host' : 'xptu',
+  'port' : '3000' }
 ];
 config.clients.infoPath = '/ajax/get-info';
 
