@@ -5,6 +5,7 @@ var logger = require('./log');
 var myutils = require('./utils');
 
 var express = require('express');
+var formidable = require('formidable');
 var fs = require('fs');
 var restler = require('restler');
 var engines = require('consolidate');
@@ -91,14 +92,52 @@ app.get('/upload-spot', function(req, res) {
 
 // 2013-12-22, AA: podemos colocar o Parser (ou mais do que um)
 // que devera ser utilizado no tratamento do request
-app.post('/ajax/upload-spot', express.bodyParser(), function(req, res) {
+app.post('/ajax/upload-spot', function(req, res) {
 
-    logger.info(myutils.JSONstringify(req.files));
-    logger.info('Received spot: ' + req.files.userSpot.name);
-    logger.info('With duration: ' + req.body.durationSpot);
+    // parse a file upload
+    var form = new formidable.IncomingForm();
+
+    /*
+    form.on('end', function() {
+      logger.info("On Form.end!");
+      res.send({
+          filesystemPath: "req.files.userSpot.path",
+          sentWithSuccess: true
+      });
+    });
+    */
+
+    form.parse(req, function(err, fields, files) {
+      logger.info("fields = " + myutils.JSONstringify(fields));
+      logger.info("files = " + myutils.JSONstringify(files));
+      var upload_result = handle_spot_upload(fields.hostToSend,
+          fields.durationSpot,
+          files.userSpot.name,
+          files.userSpot.path);
+
+      res.send({
+          filesystemPath: (upload_result !== null ? files.userSpot.path : "CHOSEN HOST NOT FOUND"),
+          // se o upload_result == null, nao encontrou o host
+          sentWithSuccess: (upload_result !== null ? upload_result : false)
+      });
+    });
+});
+
+// Devolve boolean consoante o envio com sucesso caso tenha encontrado
+// o host passado como argumento no config; se nao encontrou o host,
+// devolve null
+var handle_spot_upload = function(chosen_host, spot_duration, filename, input_path) {
+
+    /*
     var chosen_host = req.body.hostToSend;
     var spot_duration = req.body.durationSpot;
     var filename = req.files.userSpot.name;
+    var input_path = req.files.userSpot.path;
+    */
+
+    logger.info('Received spot: ' + filename);
+    logger.info('With duration: ' + spot_duration);
+
     var endpoint = "http://";
 
     var found_host = config.clients.hosts.some(function (h) {
@@ -113,8 +152,6 @@ app.post('/ajax/upload-spot', express.bodyParser(), function(req, res) {
     if ( found_host ) {
         logger.info('Send to endpoint: ', endpoint);
 
-        var input_path = req.files.userSpot.path;
-
         fs.stat(input_path, function(err, stats) {
             restler.post(endpoint, {
                 multipart: true,
@@ -128,15 +165,23 @@ app.post('/ajax/upload-spot', express.bodyParser(), function(req, res) {
                 } else {
                     logger.info("Complete!:", result);
                 }
+                /* 2014-02-09, AA: Quando esta funcao
+                 * no fim devolvia a resposta ao form POST
                 res.send({
-                    filesystemPath: req.files.userSpot.path,
+                    filesystemPath: input_path,
                     sentWithSuccess: (result instanceof Error)
                 });
+                */
+                // TODO: Depois de enviado,
+                // temos de apagar o ficheiro temporario
+                // senao fica la pendurado ad eternum
+                return (result instanceof Error);
             });
         });
+    } else {
+        return null;
     }
-
-});
+};
 
 // 2013-12-23, AA: OK a bombar
 // falta passar o caminho do ficheiro,

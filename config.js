@@ -17,7 +17,10 @@ config.log.exceptionsfile = 'exceptions.log';
 config.log.level = 'info';
 
 config.clients.hosts = [
-{ 'nome' : 'Ericeira',
+{ 'nome' : 'DEV LOCAL',
+  'host' : 'localhost',
+  'port' : '3000' }
+,{ 'nome' : 'Ericeira (Real Outdoor, OK)',
   'host' : 'thatsitoutdoor1.no-ip.biz',
   'port' : '3000' }
 ,{ 'nome' : 'VendaNOK',
